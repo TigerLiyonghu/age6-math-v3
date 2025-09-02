@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩虹数学乐园</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap'); 
+        
+        body {
+            font-family: 'Comic Neue', cursive;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, 
+                #FF9AA2 0%, 
+                #FFB7B2 20%, 
+                #FFDAC1 40%, 
+                #E2F0CB 60%, 
+                #B5EAD7 80%, 
+                #C7CEEA 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: 5px solid #fff;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #6E45E2;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA);
+            border-radius: 2px;
+        }
+        
+        .problem {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .problem input {
+            width: 80px;
+            height: 50px;
+            font-size: 24px;
+            text-align: center;
+            margin: 0 10px;
+            border: 3px solid #C7CEEA;
+            border-radius: 15px;
+            background-color: #fff;
+            font-family: 'Comic Neue', cursive;
+            transition: all 0.3s;
+        }
+        
+        .problem input:focus {
+            border-color: #6E45E2;
+            outline: none;
+            box-shadow: 0 0 10px rgba(110, 69, 226, 0.3);
+        }
+        
+        .check-btn {
+            background: linear-gradient(45deg, #6E45E2, #B5EAD7);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 22px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .check-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .check-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            min-height: 80px;
+            position: relative;
+        }
+        
+        .smiley {
+            font-size: 60px;
+            margin: 10px 0;
+            display: none;
+            animation: bounce 0.5s ease infinite alternate;
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+        
+        .firework {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 5px;
+            animation: firework 1s ease-out;
+            opacity: 0;
+            display: none;
+        }
+        
+        @keyframes firework {
+            0% { transform: translate(0, 0); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+        
+        .wrong {
+            animation: shake 0.5s;
+            background-color: #FFE0E0;
+            border-color: #FF9AA2 !important;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .new-game-btn {
+            background: linear-gradient(45deg, #FF9AA2, #FFDAC1);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: none;
+            margin: 20px auto 0;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .cloud {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            filter: blur(5px);
+            z-index: -1;
+        }
+        
+        .message {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #6E45E2;
+            font-weight: bold;
+        }
+        
+        .correct-message {
+            color: #4CAF50;
+        }
+        
+        .wrong-message {
+            color: #FF5C8D;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🌈 彩虹数学乐园 🌈</h1>
+        
+        <div id="message" class="message">来做数学题吧！</div>
+        
+        <div id="problems">
+            <!-- 题目将通过JavaScript动态生成 -->
+        </div>
+        
+        <button class="check-btn" onclick="checkAnswers()">检查答案</button>
+        <button class="new-game-btn" onclick="newGame()">再来一次</button>
+        
+        <div class="feedback">
+            <div id="smiley" class="smiley">😊</div>
+        </div>
+    </div>
+ 
+    <script>
+        // 生成随机数 (1-20)
+        function getRandomNumber(max = 20, min = 1) {
+            return Math.floor(Math.random()  * (max - min + 1)) + min;
+        }
+        
+        // 生成加减法题目
+        function generateProblem() {
+            const num1 = getRandomNumber();
+            const num2 = getRandomNumber();
+            const isAddition = Math.random()  > 0.5;
+            
+            return {
+                num1,
+                num2,
+                operator: isAddition ? '+' : '-',
+                answer: isAddition ? num1 + num2 : num1 - num2 
+            };
+        }
+        
+        // 生成3道题目
+        function generateProblems() {
+            const problems = [];
+            while (problems.length  < 3) {
+                const problem = generateProblem();
+                // 确保答案在1-20范围内
+                if (problem.answer  > 0 && problem.answer  <= 20) {
+                    problems.push(problem); 
+                }
+            }
+            return problems;
+        }
+        
+        // 显示题目
+        function displayProblems() {
+            const problemsContainer = document.getElementById('problems'); 
+            problemsContainer.innerHTML  = '';
+            
+            currentProblems.forEach((problem,  index) => {
+                const problemDiv = document.createElement('div'); 
+                problemDiv.className  = 'problem';
+                problemDiv.id  = `problem-${index}`;
+                problemDiv.innerHTML  = `
+                    ${problem.num1}  ${problem.operator}  ${problem.num2}  = 
+                    <input type="number" id="answer-${index}" min="1" max="20">
+                `;
+                problemsContainer.appendChild(problemDiv); 
+            });
+        }
+        
+        // 检查答案
+        function checkAnswers() {
+            let allCorrect = true;
+            
+            currentProblems.forEach((problem,  index) => {
+                const userAnswer = parseInt(document.getElementById(`answer-${index}`).value); 
+                const problemDiv = document.getElementById(`problem-${index}`); 
+                
+                if (isNaN(userAnswer) || userAnswer !== problem.answer)  {
+                    problemDiv.classList.add('wrong'); 
+                    allCorrect = false;
+                } else {
+                    problemDiv.classList.remove('wrong'); 
+                }
+            });
+            
+            const messageDiv = document.getElementById('message'); 
+            const smiley = document.getElementById('smiley'); 
+            const checkBtn = document.querySelector('.check-btn'); 
+            const newGameBtn = document.querySelector('.new-game-btn'); 
+            
+            if (allCorrect) {
+                messageDiv.textContent  = "太棒了！全都答对了！";
+                messageDiv.className  = "message correct-message";
+                smiley.style.display  = 'block';
+                smiley.textContent  = '😊';
+                createFireworks();
+                checkBtn.style.display  = 'none';
+                newGameBtn.style.display  = 'block';
+            } else {
+                messageDiv.textContent  = "再检查一下哦！";
+                messageDiv.className  = "message wrong-message";
+                smiley.style.display  = 'none';
+            }
+        }
+        
+        // 创建烟花效果
+        function createFireworks() {
+            const container = document.querySelector('.game-container'); 
+            const colors = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA', '#6E45E2'];
+            
+            // 持续3秒的烟花
+            const interval = setInterval(() => {
+                for (let i = 0; i < 15; i++) {
+                    const firework = document.createElement('div'); 
+                    firework.className  = 'firework';
+                    firework.style.display  = 'block';
+                    firework.style.color  = colors[Math.floor(Math.random() * colors.length)]; 
+                    
+                    // 随机位置 
+                    const x = (Math.random()  - 0.5) * 300;
+                    const y = (Math.random()  - 0.5) * 300;
+                    firework.style.setProperty('--tx',  `${x}px`);
+                    firework.style.setProperty('--ty',  `${y}px`);
+                    
+                    firework.style.left  = `${Math.random()  * 100}%`;
+                    firework.style.top  = `${Math.random()  * 100}%`;
+                    
+                    container.appendChild(firework); 
+                    
+                    // 移除烟花元素
+                    setTimeout(() => {
+                        firework.remove(); 
+                    }, 1000);
+                }
+            }, 200);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+            }, 3000);
+        }
+        
+        // 创建背景云朵 
+        function createClouds() {
+            const container = document.body; 
+            for (let i = 0; i < 10; i++) {
+                const cloud = document.createElement('div'); 
+                cloud.className  = 'cloud';
+                cloud.style.width  = `${Math.random()  * 200 + 100}px`;
+                cloud.style.height  = `${Math.random()  * 100 + 50}px`;
+                cloud.style.left  = `${Math.random()  * 100}%`;
+                cloud.style.top  = `${Math.random()  * 100}%`;
+                cloud.style.opacity  = Math.random()  * 0.5 + 0.3;
+                container.appendChild(cloud); 
+            }
+        }
+        
+        // 新游戏
+        function newGame() {
+            currentProblems = generateProblems();
+            displayProblems();
+            
+            document.getElementById('message').textContent  = "来做数学题吧！";
+            document.getElementById('message').className  = "message";
+            document.getElementById('smiley').style.display  = 'none';
+            document.querySelector('.check-btn').style.display  = 'block';
+            document.querySelector('.new-game-btn').style.display  = 'none';
+            
+            // 清除所有错误状态 
+            currentProblems.forEach((_,  index) => {
+                const problemDiv = document.getElementById(`problem-${index}`); 
+                if (problemDiv) problemDiv.classList.remove('wrong'); 
+            });
+        }
+        
+        // 初始化游戏
+        let currentProblems = generateProblems();
+        createClouds();
+        displayProblems();
+    </script>
+</body>
+</html>
